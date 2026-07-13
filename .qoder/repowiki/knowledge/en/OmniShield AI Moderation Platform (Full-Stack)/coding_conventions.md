@@ -1,0 +1,6 @@
+- Configuration is centralized in `app/core/config.py` via a single `Settings(BaseSettings)` class loaded from `.env`; callers import the module-level `settings` singleton rather than instantiating it.
+- Heavy ML models are lazy-loaded through module-global sentinel variables plus a `get_xxx()` accessor function so the first call initializes the model and subsequent calls return the cached instance.
+- Each detector in `multi_model_moderation.py` returns a uniform dict shape (`status`, `confidence`, `risk_level`, `detected_labels`, `bounding_boxes`, `reason`, `model`) so the aggregator can treat them interchangeably.
+- Async CPU/GPU-bound inference is wrapped by `_run_detector_async` which dispatches the sync detector into a shared `ThreadPoolExecutor` via `loop.run_in_executor`, then all detectors are awaited with `asyncio.gather`.
+- Route handlers follow a strict upload-validation sequence: extension check → magic-byte header validation → streaming copy to a UUID-named temp file under `UPLOAD_DIR`/`VIDEO_UPLOAD_DIR` → size cap enforcement → cache lookup → service call → DB persist → `finally` cleanup of the temp file.
+- Repository methods are declared `async` and receive an `AsyncSession` injected via FastAPI `Depends(get_db)`; services call repositories instead of touching SQLAlchemy directly.

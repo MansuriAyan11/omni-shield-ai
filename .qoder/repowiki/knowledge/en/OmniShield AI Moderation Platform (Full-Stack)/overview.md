@@ -1,0 +1,1 @@
+FastAPI + Next.js content-moderation platform that runs a multi-model AI pipeline (NudeNet, CLIP, YOLOv8, MTCNN, PaddleOCR) over uploaded images and videos with JWT/OAuth auth, Redis caching, Celery queues, and PostgreSQL persistence.
